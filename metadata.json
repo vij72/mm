@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix PressPro MES - Press Section Production \u0026 Wages Management",
+  "description": "Industrial production data sheet, automated target calculations, employee roster management, correction workflows, and multi-shift wages accounting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

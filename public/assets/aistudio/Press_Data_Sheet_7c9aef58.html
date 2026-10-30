@@ -1,0 +1,537 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Press Data Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky control bar (date / shift) above a wide punching grid with live totals and an action bar */
+:root{
+  --bg:#eef1f5; --panel:#ffffff; --ink:#16202e; --muted:#5b6778; --line:#d3dae4;
+  --brand:#1f4e78; --brand-ink:#ffffff; --brand-soft:#dce8f4; --calc:#f1f4f8;
+  --ok:#17794a; --ok-bg:#dcf2e5; --warn:#8a5a00; --warn-bg:#fdefc8;
+  --font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --panel:#18222f; --ink:#e6ebf2; --muted:#93a0b2; --line:#2c394a;
+  --brand:#5a9bd5; --brand-ink:#0b1420; --brand-soft:#1f3248; --calc:#1d2938;
+  --ok:#5fd08e; --ok-bg:#16382a; --warn:#f0c45e; --warn-bg:#3d3211; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --panel:#18222f; --ink:#e6ebf2; --muted:#93a0b2; --line:#2c394a;
+  --brand:#5a9bd5; --brand-ink:#0b1420; --brand-soft:#1f3248; --calc:#1d2938;
+  --ok:#5fd08e; --ok-bg:#16382a; --warn:#f0c45e; --warn-bg:#3d3211; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;
+  padding-block:0 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1800px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 6px;display:flex;flex-direction:column;gap:10px}
+.title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-size:19px;font-weight:700;margin:0}
+.clock{font-family:var(--mono);color:var(--muted);font-size:13px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.live{display:inline-flex;align-items:center;gap:6px}.live i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.live.off i{background:var(--muted)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+select,input[type=date],input[type=text],input[type=number],input[type=time]{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 9px;min-height:38px}
+:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.datebox{display:flex;gap:6px}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);min-height:38px;padding:0 14px;font-weight:500}
+button:hover{border-color:var(--brand)}
+button.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-radius:0;min-height:36px}
+.seg button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink);font-weight:600}
+.chk{display:flex;align-items:center;gap:7px;min-height:38px;white-space:nowrap}
+.chk input{width:17px;height:17px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:0}
+.phead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.phead h2{margin:0;font-size:14.5px;font-weight:600;letter-spacing:.02em}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.status{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:600}
+.status.saved{background:var(--ok-bg);color:var(--ok)}.status.dirty{background:var(--warn-bg);color:var(--warn)}.status.new{background:var(--brand-soft);color:var(--brand)}
+.tablewrap{overflow:auto;max-height:72vh}
+table{border-collapse:separate;border-spacing:0;min-width:2300px;width:100%}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:2px 4px;text-align:left;vertical-align:middle}
+th{background:var(--brand);color:var(--brand-ink);font-size:11px;font-weight:600;position:sticky;top:0;z-index:2;line-height:1.25;padding:7px 5px;text-align:center}
+thead tr.r2 th{top:30px}
+td.sl{font-family:var(--mono);color:var(--muted);text-align:center;width:38px}
+td.calc{background:var(--calc);font-family:var(--mono);font-size:12.5px;text-align:right;white-space:nowrap;padding-inline:8px}
+td.ck{text-align:center}td.ck input{width:17px;height:17px}
+td input[type=text],td input[type=number],td input[type=time],td select{width:100%;border:1px solid transparent;background:transparent;padding:5px 5px;min-height:30px;border-radius:4px;font-size:13px}
+td input:hover,td select:hover,td input:focus,td select:focus{border-color:var(--line);background:var(--panel)}
+td input[type=number]{text-align:right;font-family:var(--mono)}
+td input.miss{border-color:var(--warn);background:var(--warn-bg)}
+td input[type=time]{font-family:var(--mono)}
+td.x button{min-height:26px;padding:0 8px;border-color:transparent;background:transparent;color:var(--muted)}
+tr.tot td{background:var(--brand-soft);font-weight:600;font-family:var(--mono);font-size:12px;border-bottom:0;text-align:right;position:sticky;bottom:0;z-index:1}
+tr.tot td.lab{font-family:var(--font);text-align:left}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.sp{flex:1}
+.note{font-size:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:500;z-index:20;max-width:90vw}
+.tabs{display:flex;gap:6px}.tabs button{min-height:36px;font-weight:600}.tabs button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.wctl{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;padding:12px 14px;border-bottom:1px solid var(--line)}
+#wgrid td.n{font-family:var(--mono);font-size:12.5px;text-align:right;padding:5px 8px;white-space:nowrap}
+#wgrid td.z{color:var(--muted)}#wgrid td.t{background:var(--calc);font-weight:600}
+#wgrid td.nm{white-space:nowrap;padding:5px 8px}
+#wgrid th.d{min-width:46px}
+.sw{display:flex;gap:6px;align-items:center}
+.sw button{width:26px;height:26px;min-height:26px;padding:0;border-radius:50%;border:2px solid var(--line)}
+.sw button[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 2px var(--panel) inset}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="title"><h1>Press Section Daily Data Sheet</h1>
+      <div class="clock"><span id="clock">--</span><span class="live" id="live"><i></i><span id="livetxt">Live</span></span></div></div>
+    <div class="tabs" role="tablist"><button id="tabD" role="tab" aria-pressed="true">Daily Data Sheet</button><button id="tabW" role="tab" aria-pressed="false">Wages Sheet</button></div>
+    <div class="controls">
+     <div class="controls" id="dailyCtl">
+      <div class="field"><label class="lbl" for="date">Date</label>
+        <div class="datebox"><button id="prev" aria-label="Previous day">&larr;</button><input type="date" id="date"><button id="next" aria-label="Next day">&rarr;</button></div></div>
+      <div class="field"><span class="lbl">Shift</span>
+        <div class="seg" role="group" aria-label="Shift"><button id="sDay" aria-pressed="true">Day</button><button id="sNight" aria-pressed="false">Night</button></div></div>
+      <label class="chk" for="auto"><input type="checkbox" id="auto" checked> Auto date &amp; shift</label>
+      <label class="chk" for="autosave"><input type="checkbox" id="autosave" checked> Auto-save</label>
+     </div>
+      <div class="field"><label class="lbl" for="theme">Theme</label>
+        <div class="datebox"><select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+        <div class="sw" id="sw" role="group" aria-label="Accent colour"></div></div></div>
+    </div>
+  </header>
+
+  <section class="panel" id="viewD">
+    <div class="phead">
+      <div><h2 id="ptitle"></h2><div class="meta" id="pmeta"></div></div>
+      <span class="status new" id="status">Not saved yet</span>
+    </div>
+    <div class="tablewrap"><table id="grid"></table></div>
+    <div class="actions">
+      <button class="primary" id="save">Save</button>
+      <button id="addrow">+ Add row</button>
+      <button id="times">Fill shift timings</button>
+      <button id="clear">Clear all entries</button>
+      <span class="sp"></span>
+      <select id="scope" aria-label="Export scope"><option value="one">This shift</option><option value="both">Day + Night</option></select>
+      <button id="xls">Excel</button><button id="pdf">PDF</button>
+    </div>
+  </section>
+  <section class="panel" id="viewW" hidden>
+    <div class="phead">
+      <div><h2 id="wtitle">WAGES SHEET</h2><div class="meta" id="wmeta"></div></div>
+      <span class="status saved" id="wstat">Live</span>
+    </div>
+    <div class="wctl">
+      <div class="field"><label class="lbl" for="wf">From</label><input type="date" id="wf"></div>
+      <div class="field"><label class="lbl" for="wt">To</label><input type="date" id="wt"></div>
+      <div class="field"><label class="lbl" for="wm">Show</label><select id="wm"><option value="pay">Hours payable</option><option value="phys">Physical hours</option><option value="good">Good bricks</option></select></div>
+      <div class="field"><label class="lbl" for="ws">Shift</label><select id="ws"><option value="ALL">Day + Night</option><option value="DAY">Day only</option><option value="NIGHT">Night only</option></select></div>
+      <div class="field"><label class="lbl" for="wr">Rate per hour (optional)</label><input type="number" id="wr" min="0" step="any" placeholder="0"></div>
+      <label class="chk" for="wonly"><input type="checkbox" id="wonly"> Only employees with data</label>
+      <span class="sp"></span><button class="primary" id="wxls">Download Excel</button>
+    </div>
+    <div class="tablewrap"><table id="wgrid" style="min-width:900px"></table></div>
+  </section>
+  <div class="note" id="dnote">Grey cells calculate automatically. Target (12 hrs) fills from your Target Press Data when you pick Press No. and Item. Auto-save runs a few seconds after you stop typing.</div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<datalist id="items"></datalist>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script>
+const DATA={"R": {"pressDay": [["3", "Mr.SANJAY KUMAR"], ["6", "Mr.BIRU EKKA"], ["13", "Mrs.CHAMPU  MUNDAE"], ["15", "Mr.DANIYAL TAMGARIA"], ["23", "Mr.MARTIN SANGA"], ["24", "Mrs.LALI DEVI"], ["32", "Mrs.JATRI EKKA  (LALITA-2)"], ["33", "Mrs.LEELAVATHI DEVI"], ["34", "Mrs.PHAGAN EKKA (MANISHA)"], ["37", "Mrs.ASHA SANGA"], ["46", "Mr.SURESH EKKA"], ["50", "Mr.RAMAI EKKA"], ["59", "Mr.ANISH EKKA"], ["62", "Mrs.SITOON KUMARI"], ["66", "Mr.JOSEPH OREGON"], ["78", "Mr.KARMA MUNDA"], ["79", "Mrs.MUNI SANGA"], ["96", "Mrs.MADHU DHAN"], ["98", "Mr.KAILA ORAON"], ["100", "Mr.PHAGU PAHAN (SIKANDER)"], ["116", "Mr.MANISH TOPPO"], ["419", "Mr.PRABHAT MANJHI"], ["135", "Mrs.ANJELA TAMAGRIYA"], ["137", "Mr.VIJAY EKKA"], ["145", "Mr.ANKIT EKKA"], ["150", "Mrs.POULNA TUTI"], ["211", "Mrs.FALGUNI DEVI (MEENA)"], ["223", "Mr.BITTU KUMAR"], ["227", "Mrs.PREMIKA GARI"], ["237", "Mrs.LAXMI DHAN"], ["255", "Mrs.SUCHITA TOPPO (SOBHA)"], ["257", "Mrs.ELINA TOPPO"], ["275", "Mrs.FULMANI EKKA"], ["277", "Mr.PRADEEP EKKA"], ["282", "Mr.ROHIT EKKA"], ["312", "Mrs.NANKI TUTI"], ["317", "Mr.BENEDIK TUTI     (VINAY)"], ["319", "Mrs.KIRAN TAMGARIYA"], ["328", "MrsJENNA DEVI"], ["329", "Mrs.JAGNI DEVI (ROSHNI)"], ["501", "Mr.PRAVEEN KUMAR"]], "pressNight": [["51", "Mr.Raju Ekka"], ["59", "Mr.Anish Ekka"], ["113", "Mr.Bishwakarma Singh Binjhiya"], ["116", "Mr.Manish Toppo"], ["145", "Mr.Ankit Ekka"], ["174", "Mr.Panda Munda"], ["177", "Mr.Anil kujur"], ["189", "Mr.Rajesh Ekka"], ["223", "Mr.Bittu Kumar"], ["277", "Mr.Pradeep Ekka"], ["282", "Mr.Rohit Ekka"], ["363", "Mrs.Suman Kerketta"], ["383", "Mr.Anup Sanga"], ["418", "Mr.Radhanath Mahto"], ["419", "Mr.Prabhat Manjhi"], ["466", "Mr.Ajay Toppo"]], "millDay": [["5", "FULMANTI LINDA"], ["11", "DULARI SANGA"], ["49", "SOMARI MAHTO (RADHA)"], ["63", "SAWANA SINGH BINJHIYA"], ["64", "STEPHAN HORO"], ["70", "VIMAL SANGA"], ["73", "LIL MOHAN MUNDA (RAJENDER)"], ["74", "HILLARIYUS HORO (RAMU)"], ["80", "RAJU MUNDA"], ["84", "GUTJARA DEVI"], ["87", "ANMOL EKKA"], ["89", "PUSHPA MUNDANE"], ["95", "AMIT SANGA"], ["105", "SANIYARO SANGA (SONIYA)"], ["106", "AMAN TOPPO"], ["152", "DEEPAK MAHTO"], ["170", "SATISH ORAON"], ["195", "BERONIKA KHARIYA"], ["248", "MEJO KACHHAP  (MANJU)"], ["254", "SANRATI DERE SANGA (PRAMILA)"], ["284", "AJAY NAG"], ["291", "BANDHANA TIRKEY"], ["294", "BIGAN KACHHAP"], ["327", "THAKURMANI DEVI"], ["385", "SUSHMA MUNDRI"], ["65", "ROBERT LINDA"], ["428", "SUSHIL KACHHAP"], ["452", "LAXMI KUMARI"], ["463", "ASHIN PRADHAN"]], "millNight": [["9", "DASHRATH MANJHI"], ["17", "KALYAN LINDA"], ["43", "KRISHNA SINGH BINJHIA"], ["65", "ROBERT LINDA"], ["80", "RAJU MUNDA"], ["87", "ANMOL EKKA"], ["88", "BHIM SINGH BINJHIYA"], ["112", "ARJUN SINGH BINJHIYA"], ["113", "BISWAKARMA SINGH BINJHIA"], ["132", "ASHISH KACHHAP"], ["133", "DEEPAK KACHHAP"], ["161", "ROSHAN TOPPO"], ["196", "PRAKASH BINJHIYA"], ["203", "MOHAN SINGH BINJHIYA"], ["223", "BITTU KUMAR"], ["256", "RAJESH SINGH BINJHIYA"], ["419", "PRABHAT MANJHI"], ["368", "SANKAR MUNDA"], ["427", "VIMAL MUNDA"], ["428", "SUSHIL KACHHAP"]], "tkl": [["7", "MRS.MUNI DEVI"], ["21", "MRS.BELA DEVI"], ["22", "MR.MANOJ KACHHAP"], ["38", "MRS.MUDIT TIRKEY"], ["48", "MRS.RESHMA DEVI"], ["52", "MR.RAM PRAWESH BINJHIYA"], ["54", "MR.HASIB ANSARI"], ["72", "MRS.KIRAN DEVI BINJHIYA"], ["76", "MRS.SHANTI SANGA"], ["86", "MRS.LILA DEVI"], ["90", "MR.AUGUSTIN TOPPO"], ["92", "MRS.KISHMATI DEVI (SONIYA)"], ["94", "MR.DOMNA SANGA"], ["99", "MRS.GUDDI SANGA"], ["103", "MRS.LALITA DEVI"], ["107", "MRS.DASHMI SANGA"], ["109", "MRS.MANJU DEVI"], ["110", "MRS.BINITA SANGA"], ["154", "MRS.KUNI DEVI"], ["155", "MRS.SUGIYA DEVI"], ["157", "MR.PRABHU MAHTO"], ["164", "MRS.DEVAKI SANGA"], ["166", "MRS.SULO DEVI (SHANTI)"], ["175", "MRS.NILI SANGA"], ["181", "MR.MANOJ TIRKEY"], ["194", "MRS.MUSKAN DEVI"], ["200", "MRS.SISILIYA TIRKEY"], ["208", "MRS.URSELA DHAN"], ["209", "MR.BAJRANG MUNDA"], ["217", "MRS.ANITA TUTI"], ["220", "MR.SANICHARWA SANGA"], ["236", "MRS.DULIYA ORAON"], ["246", "MRS.SUSHMA TUTI"], ["258", "MRS.BIRSI HERENJ"], ["259", "MR.RANJIT SANGA"], ["261", "MRS.BIRANG DEVI"], ["268", "MRS.APLOUNIYA TUTI"], ["269", "MRS.AMIT SANGA"], ["315", "MRS.RAHUL MAHTO"], ["350", "MRS.SUMAN TIRKEY"]], "tkp": [["2", "MR.PANKAJ KUMAR GOPE"], ["10", "MR.PRAMOD RAM"], ["12", "MR.CHAMANA ORAON"], ["54", "MR.HASIB ANSARI"], ["117", "MR.BINOD TIRKEY"], ["118", "MR.MANGAL SANGA"], ["146", "MR.NAGESHWAR MAHTO"], ["156", "MR.DINESHWAR SINGH BINJHIYA"], ["180", "MR.MANJIT MAHTO"], ["204", "MR.RAMDHANI TIWARY"], ["235", "MR.KHUDAN PAHAN"], ["274", "MR.ANIL SAHU"], ["306", "MR.SUDHU GOPE"], ["307", "MR.LAXMAN MUNDA"], ["379", "MR.PRAVEEN MARCUS SANGA"], ["381", "MR.JOHNSAN MINJ"]], "odisha": [["447", "SUSANTA KUMAR JENA"], ["470", "MANOJ JENA"], ["471", "MADHAB JENA"], ["472", "BANTI JENA"], ["473", "DINBANDHU JENA"], ["474", "SANJAY KUMAR MAHTO"], ["475", "VIKASH KUMAR MAHATO"], ["476", "DULAL MAHATO"], ["477", "BIKASH ORAON"], ["478", "SUKHRAM ORAON"], ["479", "SATYAJIT JENA"], ["480", "SAURAT JENA"], ["481", "ABINASH JENA"], ["482", "CHINTUN JENA"], ["483", "MUNNA ORAON"], ["484", "JAYA CHANDRA JENA"], ["485", "ANAND JENA"], ["486", "CHINMAYA JENA"], ["487", "BASANT JENA"], ["488", "BADAL JENA"], ["489", "PANCHAM ORAON"], ["490", "RAJA JENA"], ["493", "PRABHAT JENA"], ["494", "BIKASH JENA"], ["495", "RAMESH JENA"], ["496", "BISWAJIT JENA"], ["498", "BIKASH KUMAR JENA 2"], ["499", "CHINTU JENA"], ["518", "SONARAM PINGUA"], ["519", "ANKURA AIDA"], ["520", "DAMBARUDHAR HEMBRAM"]]}, "presses": ["630 T ESP", "400 T ESP", "400 T HYD", "400 T FSP", "200 T 1 HYD", "200 T 2 HYD", "200 T 3 HYD", "200 T 4 HYD", "150 T 1 HYD", "150 T 2 HYD", "150 T 3 HYD", "150 T FSP 1", "150 T FSP 2", "150 T FSP 3", "125 T FSP 1", "125 T FSP 2", "100 T 1 HYD", "100 T 2 HYD", "30 T 1 HYD", "30 T 2 HYD", "30 T 3 HYD"], "items": [["HITECH(IS-8)", {"30 T 1 HYD": 750, "30 T 2 HYD": 675, "30 T 3 HYD": 675}], ["KCSSL 55% (220 SLEEVE)", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["KCSSL 55% (255 SLEEVE)", {"400 T HYD": 200, "200 T 1 HYD": 285, "200 T 2 HYD": 285, "150 T 1 HYD": 285, "150 T 2 HYD": 285, "150 T 3 HYD": 285, "100 T 1 HYD": 285, "100 T 2 HYD": 285}], ["KCSSL 55% (285 SLEEVE)", {"100 T 1 HYD": 285, "100 T 2 HYD": 285}], ["KCSSL 250 Sleeve 74%", {"400 T HYD": 135, "200 T 1 HYD": 150, "200 T 2 HYD": 150}], ["KCSSL 115 TR 74%", {"100 T 1 HYD": 375, "100 T 2 HYD": 375}], ["KCSSL 134 RISER 74%", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["KCSSL 200 RISER 74%", {"100 T 1 HYD": 250, "100 T 2 HYD": 250}], ["KCSSL 260 RISER 74%", {"100 T 1 HYD": 250, "100 T 2 HYD": 250}], ["KCSSL 125 TR 74%", {"100 T 1 HYD": 375, "100 T 2 HYD": 375}], ["Star wire 47-52% (352 sleeve)", {"200 T 1 HYD": 150, "200 T 2 HYD": 240}], ["Star wire 47-52% (5\" sleeve)", {"200 T 1 HYD": 225, "200 T 2 HYD": 300}], ["Star wire 47-52% (2\" sleeve)", {"200 T 1 HYD": 225, "200 T 2 HYD": 300, "100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 47-52% (200T/R)", {"150 T 1 HYD": 300, "150 T 2 HYD": 300, "150 T 3 HYD": 350, "100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 47-52% (325T/R)", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["Star wire 47-52% (225T/R)", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["Star wire 47-52% (125T/R)", {"150 T 1 HYD": 300, "150 T 2 HYD": 300, "150 T 3 HYD": 350, "100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 47-52% (2\"T/R)", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 47-52% (1\"T/R)", {"100 T 1 HYD": 450, "100 T 2 HYD": 450}], ["Star wire 84% (325T/R)", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["Star wire 84% (225T/R)", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["Star wire 84% (2\"T/R)", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 84% (1\"T/R)", {"100 T 1 HYD": 450, "100 T 2 HYD": 450}], ["Star wire 84% (5\" sleeve)", {"200 T 1 HYD": 225, "200 T 2 HYD": 300}], ["Star wire 84% (2\" sleeve)", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 84% (200T/R)", {"150 T 1 HYD": 300, "150 T 2 HYD": 300, "150 T 3 HYD": 350, "100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 84% (125T/R)", {"150 T 1 HYD": 300, "150 T 2 HYD": 300, "150 T 3 HYD": 350, "100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Star wire 84% (352 sleeve)", {"200 T 1 HYD": 150, "200 T 2 HYD": 240}], ["50% Shiva Alloys(200T/R)", {}], ["50% Shiva Alloys(390T/R)", {}], ["50% Shiva Alloys(230T/R)", {}], ["50% Shiva Alloys(305 sleeve)", {"200 T 1 HYD": 200, "200 T 2 HYD": 240}], ["ROOFSET BRICK 70% (MK-1)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-2)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-3)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-5)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-6)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-8)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-9)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-11)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-12)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["ROOFSET BRICK 70% (MK-13)", {"150 T FSP 1": 500, "150 T FSP 2": 500, "150 T FSP 3": 500}], ["ROOFSET BRICK 70% (MK-14)", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 250, "150 T FSP 1": 500, "150 T FSP 2": 500, "150 T FSP 3": 500}], ["GKW 250 S/R sleeve 70%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 250}], ["GKW 230 S/R sleeve 70%", {}], ["GKW-60%(125 T/R)", {"100 T 1 HYD": 375, "100 T 2 HYD": 375}], ["GKW-60%(170 T/R)", {"100 T 1 HYD": 325, "100 T 2 HYD": 325}], ["GKW-60%(255 Sleeve)", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["HINDALCO (275*100*86/80SA)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["HINDALCO (275*100*70/60SA)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["HINDALCO(250*125*75)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["HINDALCO(225*125*75)", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}], ["72% Mullito Checker", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 225}], ["ZAMPLE(250*124*64)", {}], ["DOOR BRICK MN-205", {"400 T FSP": 180}], ["DOOR BRICK MN-206", {"400 T FSP": 180}], ["ARCVAC 320 TR 60%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["ARCVAC STOOL PLATE 60%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 250}], ["ARCVAC 255 sleeve 60%", {"200 T 1 HYD": 180, "200 T 2 HYD": 240}], ["ARCVAC 67 TR 60%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 300}], ["ARCVAC 221 TR 60%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 325}], ["ARCVAC 170 TR 60%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 325}], ["ARCVAC 125 TR 60%", {"100 T 1 HYD": 375, "100 T 2 HYD": 375}], ["ARCVAC 320 TR 74%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 240}], ["ARCVAC STOOL PLATE 74%", {}], ["ARCVAC 255 SLEEVE 74%", {"200 T 1 HYD": 180, "200 T 2 HYD": 240}], ["ARCVAC 67 TR 74%", {}], ["ARCVAC 171 TR 74%", {}], ["ARCVAC 221 TR 74%", {}], ["ARCVAC 125 TR 74%", {}], ["ARCVAC 170 TR 74%", {}], ["ARCVAC 260 STOOL PLATE 74%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 325, "100 T 1 HYD": 250, "100 T 2 HYD": 250}], ["L&T 300 TR 80%", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["L&T 202 TR 80%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 325}], ["L&T 250 SLEEVE 80%", {"400 T HYD": 135, "200 T 2 HYD": 180}], ["L&T 100 SLEEVE 80%", {"400 T HYD": 200}], ["L&T 230 TR 80%", {"400 T HYD": 150}], ["FRC 12\"Sleeve 50%", {"200 T 1 HYD": 180, "200 T 2 HYD": 240}], ["Jai Laxmi 370 TR 100 SQ 74%", {"150 T 1 HYD": 202, "150 T 2 HYD": 202}], ["Jai Laxmi 3\" sleeve 74%", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["Jai Laxmi 200 TR 74%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250}], ["Jai Laxmi 290 Sleeve 74%", {"100 T 1 HYD": 285, "100 T 2 HYD": 285}], ["Jai Laxmi 255 Sleeve 74%", {"400 T HYD": 200}], ["Jai Laxmi 380 TR 74%", {}], ["JSL 415 TR 74%", {}], ["SUNFLAG RB-1 74%", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["SUNFLAG RB-2 74%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["SUNFLAG 2\"Sleeve 74%", {"200 T 1 HYD": 250, "200 T 2 HYD": 300}], ["SUNFLAG 352 SLEEVE 74%", {"200 T 1 HYD": 150, "200 T 2 HYD": 240}], ["MUSCO-60% (357 sleeve)", {"200 T 1 HYD": 150, "200 T 2 HYD": 240}], ["MUSCO-60% (177 sleeve)", {"200 T 1 HYD": 250, "200 T 2 HYD": 300}], ["MUSCO-60% (RB-1)", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["MUSCO-60% (RB-2)", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["MUSCO RB-1 74%", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["MUSCO RB-2 74%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["MUSCO 177 Sleeve 74%", {}], ["MUSCO 357 Sleeve 74%", {}], ["MUSCO RB-1 80%", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["MUSCO RB-2 80%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 270}], ["MUSCO 357 Sleeve 80%", {"200 T 1 HYD": 150, "200 T 2 HYD": 240}], ["MUSCO 177 Sleeve 80%", {"200 T 1 HYD": 250, "200 T 2 HYD": 300}], ["12\" T/R 45% (R-2)", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 225}], ["6\" T/R 45%", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["14\" T/R 45% R-1", {"150 T 1 HYD": 202, "150 T 2 HYD": 202, "150 T 3 HYD": 240}], ["12\" sleeve 45% (R-9)", {"200 T 1 HYD": 200, "200 T 2 HYD": 240}], ["12\" T/R 50%", {}], ["273 Sleeve 50%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 225}], ["273 Sleeve 45%", {"200 T 1 HYD": 200, "200 T 2 HYD": 225}], ["T-4 60%", {"200 T 1 HYD": 200, "200 T 2 HYD": 225}], ["T-6 60%", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["T-2 60%", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["T-12 60%", {"200 T 1 HYD": 200, "200 T 2 HYD": 240}], ["T-8 60%", {"100 T 1 HYD": 300, "100 T 2 HYD": 300}], ["SLEEVE SOCKET 160 OD 55%", {"125 T FSP 1": 750, "125 T FSP 2": 750}], ["SLEEVE SOCKET 140 OD 55%", {"125 T FSP 1": 750, "125 T FSP 2": 750}], ["120 SQ RUNNER WASHER -55%", {"125 T FSP 1": 750, "125 T FSP 2": 750}], ["100 SQ RUNNER WASHER -55%", {"125 T FSP 1": 750, "125 T FSP 2": 750}], ["T-1 60%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 225}], ["COX 229*114*64 45% (9*4.5*3\") 45%", {"150 T FSP 1": 1050, "150 T FSP 2": 1050, "150 T FSP 3": 1050}], ["420*280*90 62%", {}], ["250*124*40 40%", {}], ["230*115*73/65 E/A 57-61%", {}], ["ANCHOR BRICK RB-1", {}], ["RB-2 roof bricks", {}], ["RB-3 roof bricks 58%", {}], ["VIRAJ 260 T/R 70%", {}], ["VIRAJ 160 T/R 70%", {}], ["VIRAJ 2\" T/R 70%", {}], ["VIRAJ 1\" T/R 70%", {}], ["VIRAJ 300 SLEEVE OD-150 70%", {}], ["PGI SLEEVE 110", {"200 T 1 HYD": 225, "200 T 2 HYD": 300}], ["310 Sleeve 74% Panjab", {"200 T 1 HYD": 200, "200 T 2 HYD": 240}], ["PGI 320 T/R 74%", {"150 T 1 HYD": 225, "150 T 2 HYD": 225, "150 T 3 HYD": 240}], ["PGI 265 T/R 74%", {"150 T 1 HYD": 250, "150 T 2 HYD": 250, "150 T 3 HYD": 325}], ["230*113*75/70 S/A 62%", {"150 T FSP 1": 750, "150 T FSP 2": 750, "150 T FSP 3": 750}]]};DATA.defaults={DAY:["30 T 3 HYD","HITECH(IS-8)"],NIGHT:["30 T 2 HYD","HITECH(IS-8)"]};
+const $=id=>document.getElementById(id);
+const ITEMS=DATA.items, PRESSES=DATA.presses;
+const nk=x=>String(x||"").toLowerCase().replace(/\s+/g," ").trim();
+const itemMap={};ITEMS.forEach(([n,t])=>itemMap[nk(n)]=t);
+$("items").innerHTML=ITEMS.map(([n])=>`<option value="${n.replace(/"/g,"&quot;")}">`).join("");
+
+/* columns: k key, h header, g group, t type, tot total kind, f calc */
+const COLS=[
+ {k:"code",h:"EMP CODE",t:"text",w:70},
+ {k:"name",h:"EMPLOYEE NAME",t:"text",w:200},
+ {k:"op",h:"PRESS OPERATOR",g:"TYPE OF LABOUR",t:"check",tot:"count"},
+ {k:"hp",h:"HELPER",g:"TYPE OF LABOUR",t:"check",tot:"count"},
+ {k:"lb",h:"LABOUR",g:"TYPE OF LABOUR",t:"check",tot:"count"},
+ {k:"gm",h:"M",g:"GENDER",t:"calc",f:r=>/^\s*mr\.?(?!s)/i.test(r.name)?"M":""},
+ {k:"gf",h:"F",g:"GENDER",t:"calc",f:r=>/^\s*mrs\.?/i.test(r.name)?"F":""},
+ {k:"press",h:"PRESS NO.",t:"press",tot:"counta",w:105},
+ {k:"run",h:"PRESS RUNNING HOURS",t:"num",tot:"sum"},
+ {k:"tin",h:"TIME IN PRESS SHOP",t:"time"},
+ {k:"tout",h:"TIME OUT",t:"time"},
+ {k:"phys",h:"PHYSICAL HOURS IN PRESS SHOP",t:"calc",tot:"sum",f:r=>hrs(r.tin,r.tout),x:(r,L)=>`IF(AND(${L.tin}${r}<>"",${L.tout}${r}<>""),MOD(${L.tout}${r}-${L.tin}${r},1)*24,"")`},
+ {k:"item",h:"NAME OF BRICKS",t:"item",tot:"counta",w:230},
+ {k:"q",h:"QUALITY Al TO 3 PER%",t:"text",tot:"counta",w:90},
+ {k:"gw",h:"GREEN UNIT WEIGHT IN KGS",t:"num",tot:"sum"},
+ {k:"tm",h:"TARGET MOISTURE",t:"num",tot:"sum"},
+ {k:"am",h:"ACTUAL MOISTURE",t:"num",tot:"sum"},
+ {k:"tgt",h:"TARGET OF 12 HOURS NO OF BRICKS",t:"num",tot:"sum"},
+ {k:"good",h:"ACTUAL GOOD SALEABLE BRICKS MADE NOS",t:"num",tot:"sum"},
+ {k:"rej",h:"GREEN REJECTED BRICKS MADE NOS",t:"num",tot:"sum"},
+ {k:"wt",h:"TOTAL GOOD BRICK WEIGHT MADE IN MT",t:"calc",tot:"sum",f:r=>num(r.gw)*num(r.good),x:(r,L)=>`${L.gw}${r}*${L.good}${r}`},
+ {k:"pay",h:"HOURS PAYABLES CONVERTED FROM GOOD BRICKS MADE",t:"calc",tot:"sum",f:r=>{const t=num(r.tgt);return t===0?"":TH()/t*num(r.good)},x:(r,L)=>`IFERROR($TH$/${L.tgt}${r}*${L.good}${r},"")`},
+ {k:"tbd",h:"TARGET BD",t:"num",tot:"sum"},
+ {k:"abd",h:"ACTUAL BD",t:"num",tot:"sum"},
+ {k:"rem",h:"REMARKS",t:"text",w:160},
+];
+const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n};
+function hrs(a,b){if(!a||!b)return "";const[h1,m1]=a.split(":").map(Number),[h2,m2]=b.split(":").map(Number);let d=(h2*60+m2)-(h1*60+m1);if(d<0)d+=1440;return d/60}
+const fmt=v=>v===""||v==null?"":typeof v==="string"?v:(Math.round(v*100)/100).toString();
+function TH(){return 12}
+function pctOf(name){const m=/(\d{2,3}(?:-\d{2})?)\s*%/.exec(name||"");return m?m[1]+"%":""}
+function autoTarget(r){const t=itemMap[nk(r.item)];if(!t||!r.press)return "";const v=t[r.press];return v==null?"":v}
+/* sync target of 12 hrs from Target Press Data; returns true when a press+item pair has no target */
+function syncTarget(r,i,force){
+  const a=autoTarget(r),have=r.press&&String(r.item||"").trim();
+  if(a!==""){if(force||String(r.tgt)===""||r.tgtAuto){r.tgt=a;r.tgtAuto=true}}
+  else if(force&&have){r.tgt="";r.tgtAuto=true}
+  const e=document.getElementById("tgt_"+i);
+  if(e){e.value=r.tgt;const miss=have&&a==="";e.classList.toggle("miss",!!miss);e.title=miss?"No target in Target Press Data for this press and item. Type it manually.":(a!==""?"Auto from Target Press Data":"")}
+}
+
+/* ---------- state ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const dmy=s=>{const[a,b,c]=s.split("-");return c+"-"+b+"-"+a};
+function nowShift(){const n=new Date(),h=n.getHours();if(h>=6&&h<18)return{date:iso(n),shift:"DAY"};const d=new Date(n);if(h<6)d.setDate(d.getDate()-1);return{date:iso(d),shift:"NIGHT"}}
+const ROSTER={DAY:DATA.R.pressDay,NIGHT:DATA.R.pressNight};
+const blankRow=(c="",n="")=>({code:c,name:n,op:false,hp:false,lb:false,press:"",tgtAuto:false,run:"",tin:"",tout:"",item:"",q:"",gw:"",tm:"",am:"",tgt:"",good:"",rej:"",tbd:"",abd:"",rem:""});
+function fresh(shift){const rows=ROSTER[shift].map(([c,n])=>blankRow(c,n));const min=shift==="DAY"?45:21;while(rows.length<min)rows.push(blankRow());const d0=DATA.defaults[shift];if(d0&&rows[0]){rows[0].press=d0[0];rows[0].item=d0[1];rows[0].q=pctOf(d0[1]);rows[0].tgt=autoTarget(rows[0]);rows[0].tgtAuto=true}return{th:12,rows}}
+let state={date:"",shift:"DAY",auto:true,autosave:true};
+let doc=null,dirty=false,remote={},db=null,dl=null,unsub=null,saveTimer=null,loadedAt=0;
+const key=(d=state.date,s=state.shift)=>d+"__"+s;
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2600)}
+function lsGet(k){try{return JSON.parse(localStorage.getItem("psd:"+k))}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem("psd:"+k,JSON.stringify(v))}catch(e){}}
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+
+/* ---------- render ---------- */
+function headHTML(){
+  let g1="",g2="",i=0;const cols=[{h:"SL. NO",g:null},...COLS];
+  const groups=[];cols.forEach((c,idx)=>{if(c.g){const l=groups[groups.length-1];if(l&&l.g===c.g)l.n++;else groups.push({g:c.g,n:1,at:idx})}});
+  const inG=c=>!!c.g;
+  let r1="<tr>",r2="<tr class='r2'>";
+  cols.forEach((c,idx)=>{
+    if(!inG(c))r1+=`<th rowspan="2">${c.h}</th>`;
+    else{const gr=groups.find(x=>x.at===idx);if(gr)r1+=`<th colspan="${gr.n}">${gr.g}</th>`;r2+=`<th>${c.h}</th>`}
+  });
+  return "<thead>"+r1+"<th rowspan='2'></th></tr>"+r2+"</tr></thead>";
+}
+function rowHTML(r,i){
+  let h=`<tr data-i="${i}"><td class="sl">${i+1}</td>`;
+  COLS.forEach(c=>{
+    const id=`${c.k}_${i}`;
+    if(c.t==="calc")h+=`<td class="calc" id="${id}"></td>`;
+    else if(c.t==="check")h+=`<td class="ck"><input type="checkbox" id="${id}" data-i="${i}" data-k="${c.k}"${r[c.k]?" checked":""} aria-label="${c.h} row ${i+1}"></td>`;
+    else if(c.t==="press")h+=`<td><select id="${id}" data-i="${i}" data-k="${c.k}" aria-label="Press no row ${i+1}"><option value=""></option>${PRESSES.map(p=>`<option${p===r.press?" selected":""}>${p}</option>`).join("")}</select></td>`;
+    else if(c.t==="item"){const cur=String(r.item||"");const known=itemMap[nk(cur)]!==undefined;h+=`<td><select id="${id}" data-i="${i}" data-k="${c.k}" aria-label="Item row ${i+1}"><option value=""></option>${cur&&!known?`<option selected>${esc(cur)}</option>`:""}${ITEMS.map(([n])=>`<option${n===cur||(known&&nk(n)===nk(cur))?" selected":""}>${esc(n)}</option>`).join("")}</select></td>`}
+    else if(c.t==="num")h+=`<td><input type="number" step="any" id="${id}" data-i="${i}" data-k="${c.k}" value="${esc(r[c.k])}" aria-label="${c.h} row ${i+1}"></td>`;
+    else if(c.t==="time")h+=`<td><input type="time" id="${id}" data-i="${i}" data-k="${c.k}" value="${esc(r[c.k])}" aria-label="${c.h} row ${i+1}"></td>`;
+    else h+=`<td><input type="text" id="${id}" data-i="${i}" data-k="${c.k}" value="${esc(r[c.k])}" aria-label="${c.h} row ${i+1}"></td>`;
+  });
+  return h+`<td class="x"><button data-del="${i}" aria-label="Delete row ${i+1}" title="Delete row">&times;</button></td></tr>`;
+}
+function build(){
+  $("grid").innerHTML=headHTML()+"<tbody>"+doc.rows.map(rowHTML).join("")+totRow()+"</tbody>";
+  doc.rows.forEach((r,i)=>syncTarget(r,i,false));calcAll();
+}
+function totRow(){
+  let h=`<tr class="tot"><td class="lab" colspan="3">TOTALS</td>`;
+  COLS.slice(2).forEach(c=>h+=`<td id="tot_${c.k}"></td>`);
+  return h+"<td></td></tr>";
+}
+function calcAll(){
+  doc.rows.forEach((r,i)=>COLS.forEach(c=>{if(c.t==="calc"){const e=$(c.k+"_"+i);if(e)e.textContent=fmt(c.f(r))}}));
+  COLS.slice(2).forEach(c=>{
+    const e=$("tot_"+c.k);if(!e||!c.tot)return;let v=0;
+    if(c.tot==="sum")v=doc.rows.reduce((a,r)=>a+num(c.t==="calc"?c.f(r):r[c.k]),0);
+    else if(c.tot==="counta")v=doc.rows.filter(r=>String(r[c.k]||"").trim()).length;
+    else if(c.tot==="count")v=doc.rows.filter(r=>r[c.k]).length;
+    e.textContent=fmt(v);
+  });
+  $("ptitle").textContent=`DATE: ${dmy(state.date)}   SHIFT: ${state.shift}   PRESS SECTION DAILY DATA SHEET`;
+  const n=doc.rows.filter(r=>r.name||r.code).length;
+  $("pmeta").textContent=`${n} employees · ${state.shift==="DAY"?"06:00–18:00":"18:00–06:00"}`;
+}
+function setStatus(){
+  const e=$("status"),r=remote[key()];
+  if(dirty){e.className="status dirty";e.textContent=state.autosave?"Saving soon…":"Unsaved changes"}
+  else if(r){e.className="status saved";e.textContent="Saved "+new Date(r.savedAt).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
+  else{e.className="status new";e.textContent="Not saved yet"}
+}
+function head(){
+  $("date").value=state.date;$("auto").checked=state.auto;$("autosave").checked=state.autosave;
+  $("sDay").setAttribute("aria-pressed",state.shift==="DAY");$("sNight").setAttribute("aria-pressed",state.shift==="NIGHT");
+  $("live").classList.toggle("off",!db);$("livetxt").textContent=db?"Live":"Local only";setStatus();
+}
+/* ---------- store ---------- */
+function load(){const r=remote[key()];doc=r?{th:r.th||12,rows:r.rows}:fresh(state.shift);dirty=false;build();head()}
+function subscribe(){
+  if(unsub){unsub();unsub=null}
+  clearTimeout(saveTimer);dirty=false;remote={};
+  if(db){
+    try{unsub=db.collection("press_sheets").doc(key()).onSnapshot(s=>{
+      const was=remote[key()]&&remote[key()].savedAt;
+      if(s.exists)remote[key()]=s.data();else delete remote[key()];
+      const now=remote[key()]&&remote[key()].savedAt;
+      if(!dirty&&(!doc||now!==was)){load()}else setStatus();
+    },e=>toast("Live refresh paused: "+(e.message||e.code)))}catch(e){}
+  }else{const v=lsGet(key());if(v)remote[key()]=v}
+  load();
+}
+async function save(quiet){
+  clearTimeout(saveTimer);
+  const rec={date:state.date,shift:state.shift,th:doc.th,rows:doc.rows,savedAt:Date.now()},k=key();
+  try{
+    if(db)await db.collection("press_sheets").doc(k).set(rec);else lsSet(k,rec);
+    remote[k]=rec;dirty=false;setStatus();if(!quiet)toast("Saved: "+dmy(state.date)+" "+state.shift);
+  }catch(e){toast("Save failed: "+(e.message||e.code||"try again"))}
+}
+function touch(){dirty=true;setStatus();clearTimeout(saveTimer);if(state.autosave)saveTimer=setTimeout(()=>save(true),3000)}
+const stash={};
+function go(date,shift){
+  if(dirty){clearTimeout(saveTimer);const d=doc,k=key();save(true)} // flush before switching
+  if(date)state.date=date;if(shift)state.shift=shift;subscribe();
+}
+/* ---------- events ---------- */
+$("date").onchange=e=>{if(e.target.value){state.auto=false;go(e.target.value,null)}};
+const shiftDay=n=>{const d=new Date(state.date+"T00:00:00");d.setDate(d.getDate()+n);state.auto=false;go(iso(d),null)};
+$("prev").onclick=()=>shiftDay(-1);$("next").onclick=()=>shiftDay(1);
+$("sDay").onclick=()=>{state.auto=false;go(null,"DAY")};$("sNight").onclick=()=>{state.auto=false;go(null,"NIGHT")};
+$("auto").onchange=e=>{state.auto=e.target.checked;if(state.auto){const n=nowShift();go(n.date,n.shift)}else head()};
+$("autosave").onchange=e=>{state.autosave=e.target.checked;if(state.autosave&&dirty)touch();else setStatus()};
+const onEdit=e=>{
+  const t=e.target,i=+t.dataset.i,k=t.dataset.k;if(isNaN(i)||!k)return;
+  const r=doc.rows[i];r[k]=t.type==="checkbox"?t.checked:t.value;
+  if(k==="item"||k==="press"){
+    syncTarget(r,i,true);
+    if(k==="item"){const p=pctOf(r.item);if(p&&itemMap[nk(r.item)]){r.q=p;$("q_"+i).value=p}}
+  }else if(k==="tgt"){r.tgtAuto=false
+  }
+  calcAll();touch();
+};
+$("grid").addEventListener("input",onEdit);$("grid").addEventListener("change",e=>{if(e.target.dataset.k==="item"||e.target.dataset.k==="press")onEdit(e)});
+$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(!b)return;doc.rows.splice(+b.dataset.del,1);build();touch()});
+$("addrow").onclick=()=>{doc.rows.push(blankRow());build();touch();const w=document.querySelector(".tablewrap");w.scrollTop=w.scrollHeight};
+$("times").onclick=()=>{const[a,b]=state.shift==="DAY"?["06:00","18:00"]:["18:00","06:00"];doc.rows.forEach(r=>{if(r.name&&!r.tin&&!r.tout){r.tin=a;r.tout=b}});build();touch()};
+$("clear").onclick=()=>{if(!$("clear").dataset.arm){$("clear").dataset.arm=1;$("clear").textContent="Click again to confirm";setTimeout(()=>{delete $("clear").dataset.arm;$("clear").textContent="Clear all entries"},3000);return}
+  delete $("clear").dataset.arm;$("clear").textContent="Clear all entries";doc=fresh(state.shift);build();touch()};
+$("save").onclick=()=>save(false);
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="s"){e.preventDefault();save(false)}});
+
+/* ---------- export ---------- */
+async function docFor(shift){
+  if(shift===state.shift)return doc;
+  const k=key(state.date,shift);
+  if(db){try{const s=await db.collection("press_sheets").doc(k).get();if(s.exists){const d=s.data();return{th:d.th||12,rows:d.rows}}}catch(e){}}
+  else{const v=lsGet(k);if(v)return{th:v.th||12,rows:v.rows}}
+  return fresh(shift);
+}
+const letter=i=>{let s="";i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s};
+const HEADS=["SL. NO",...COLS.map(c=>c.h)];
+function sheetFor(d,shift){
+  const banner=`DATE: ${dmy(state.date)}      SHIFT: ${shift}      PRESS SECTION DAILY DATA SHEET`;
+  const L={};COLS.forEach((c,i)=>L[c.k]=letter(i+1));
+  const sub=HEADS.map(()=>"");sub[3]="PRESS OPERATOR";sub[4]="HELPER";sub[5]="LABOUR";sub[6]="M";sub[7]="F";sub[18]=12;
+  const aoa=[[banner],HEADS,sub];
+  const first=4,last=first+d.rows.length-1;
+  d.rows.forEach((r,i)=>{
+    const rn=first+i;
+    const row=[i+1];
+    COLS.forEach(c=>{
+      let v=r[c.k];
+      if(c.t==="check")v=v?"YES":"";
+      else if(c.t==="calc"){const val=c.f(r);v=c.x?{f:c.x(rn,L).replace("$TH$","$S$3"),v:val===""?"":val}:val}
+      else if(c.t==="num")v=v===""||v==null?"":num(v);
+      else if(c.t==="time"){v=v?{t:"n",v:(num(v.split(":")[0])*60+num(v.split(":")[1]))/1440,z:"h:mm AM/PM"}:""}
+      row.push(v);
+    });
+    aoa.push(row);
+  });
+  const tot=["TOTALS","",""];
+  COLS.slice(2).forEach(c=>{
+    const col=L[c.k],rg=`${col}${first}:${col}${last}`;
+    if(c.tot==="sum"){let s=d.rows.reduce((a,r)=>a+num(c.t==="calc"?c.f(r):r[c.k]),0);tot.push({f:`SUM(${rg})`,v:s})}
+    else if(c.tot==="counta"){tot.push({f:`COUNTA(${rg})`,v:d.rows.filter(r=>String(r[c.k]||"").trim()).length})}
+    else if(c.tot==="count"){tot.push({f:`COUNTIF(${rg},"YES")`,v:d.rows.filter(r=>r[c.k]).length})}
+    else tot.push("");
+  });
+  aoa.push(tot);
+  return{aoa,th:d.th,banner};
+}
+function toWS(s){
+  const aoa=s.aoa.map(r=>r.map(v=>v&&typeof v==="object"&&!v.t?"":v));
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  s.aoa.forEach((r,ri)=>r.forEach((v,ci)=>{
+    if(v&&typeof v==="object"){const a=XLSX.utils.encode_cell({r:ri,c:ci});
+      if(v.t)ws[a]={t:"n",v:v.v,z:v.z};else ws[a]={t:typeof v.v==="number"?"n":"s",v:v.v,f:v.f}}}));
+  ws["!cols"]=HEADS.map((h,i)=>({wch:i===2?28:i===13?30:i>=11?16:12}));
+  const mg=[{s:{r:0,c:0},e:{r:0,c:25}},{s:{r:1,c:3},e:{r:1,c:5}},{s:{r:1,c:6},e:{r:1,c:7}}];
+  HEADS.forEach((_,i)=>{if(i<3||i>7)mg.push({s:{r:1,c:i},e:{r:2,c:i}})});
+  mg.push({s:{r:s.aoa.length-1,c:0},e:{r:s.aoa.length-1,c:2}});ws["!merges"]=mg;
+  return ws;
+}
+function fname(ext,both){return `PRESS_DATA_${dmy(state.date)}_${both?"DAY_NIGHT":state.shift}.${ext}`}
+async function offer(name,data){
+  if(!dl){try{const url=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);toast("File ready: "+name)}catch(e){toast("Could not save: "+(e.message||e.code))}return}
+  try{await dl.save({filename:name,data});toast("File ready: "+name)}catch(e){if(e.code!=="declined")toast("Could not save: "+(e.message||e.code))}
+}
+const shiftsToExport=()=>$("scope").value==="both"?["DAY","NIGHT"]:[state.shift];
+$("xls").onclick=async()=>{
+  const wb=XLSX.utils.book_new();
+  for(const sh of shiftsToExport()){const d=await docFor(sh);XLSX.utils.book_append_sheet(wb,toWS(sheetFor(d,sh)),"PRESS "+sh)}
+  await offer(fname("xlsx",$("scope").value==="both"),new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})]));
+};
+$("pdf").onclick=async()=>{
+  const {jsPDF}=window.jspdf;const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a3"});
+  let first=true;
+  for(const sh of shiftsToExport()){
+    const d=await docFor(sh),s=sheetFor(d,sh);
+    if(!first)pdf.addPage();first=false;
+    pdf.setFont("helvetica","bold");pdf.setFontSize(12);pdf.text(s.banner,24,28);
+    const body=s.aoa.slice(3).map(r=>r.map(v=>{if(v&&typeof v==="object"){if(v.t){const m=Math.round(v.v*1440);return pad(Math.floor(m/60))+":"+pad(m%60)}return fmt(v.v)}return v==null?"":(typeof v==="number"?fmt(v):v)}));
+    pdf.autoTable({head:[HEADS],body,startY:38,theme:"grid",margin:{left:14,right:14},
+      styles:{fontSize:5.6,cellPadding:1.6,overflow:"linebreak",lineColor:[190,198,210],lineWidth:.3},
+      headStyles:{fillColor:[31,78,120],textColor:255,fontSize:5.2},
+      didParseCell:h=>{if(h.section==="body"&&h.row.index===body.length-1){h.cell.styles.fontStyle="bold";h.cell.styles.fillColor=[220,232,244]}}});
+  }
+  await offer(fname("pdf",$("scope").value==="both"),pdf.output("arraybuffer"));
+};
+/* ---------- wages sheet ---------- */
+const WR=DATA.R;
+const wst={from:"",to:"",metric:"pay",shift:"ALL",rate:"",only:false};
+try{const p=JSON.parse(localStorage.getItem("psd:wprefs"));if(p&&p.rate)wst.rate=p.rate}catch(e){}
+let wdocs={},wunsub=null,view="D",wlast=null;
+const eachDate=(a,b)=>{const out=[];const d=new Date(a+"T00:00:00"),e=new Date(b+"T00:00:00");while(d<=e&&out.length<62){out.push(iso(d));d.setDate(d.getDate()+1)}return out};
+const ek=(c,n)=>String(c||"").trim()?"C"+String(c).trim():"N"+nk(n);
+function rowVals(r,th){
+  const phys=hrs(r.tin,r.tout),t=num(r.tgt),good=num(r.good);
+  return{phys:phys===""?0:phys,good,pay:t>0?(th||12)/t*good:0};
+}
+function wagesModel(){
+  const dates=eachDate(wst.from,wst.to),emps=new Map();
+  const add=(c,n,fromRoster)=>{const k=ek(c,n);if(!emps.has(k))emps.set(k,{code:String(c||"").trim(),name:n||"",type:"",vals:{},rost:fromRoster});return emps.get(k)};
+  [...WR.pressDay,...WR.pressNight].forEach(([c,n])=>add(c,n,true));
+  Object.values(wdocs).forEach(d=>{
+    if(wst.shift!=="ALL"&&d.shift!==wst.shift)return;
+    if(!(d.date>=wst.from&&d.date<=wst.to))return;
+    (d.rows||[]).forEach(r=>{
+      if(!String(r.name||"").trim()&&!String(r.code||"").trim())return;
+      const e=add(r.code,r.name,false);
+      if(!e.name)e.name=r.name;
+      const t=r.op?"Operator":r.hp?"Helper":r.lb?"Labour":"";if(t)e.type=t;
+      const v=rowVals(r,d.th)[wst.metric];
+      if(v)e.vals[d.date]=(e.vals[d.date]||0)+v;
+    });
+  });
+  let list=[...emps.values()];
+  if(wst.only)list=list.filter(e=>Object.keys(e.vals).length);
+  list.forEach(e=>{e.total=dates.reduce((a,d)=>a+(e.vals[d]||0),0);e.days=dates.filter(d=>(e.vals[d]||0)>0).length;e.gender=/^\s*mrs\.?/i.test(e.name)?"F":/^\s*mr\.?/i.test(e.name)?"M":""});
+  return{dates,list};
+}
+const dshort=d=>d.slice(8)+"/"+d.slice(5,7);
+function renderWages(){
+  if(!wst.from||!wst.to)return;
+  const{dates,list}=wagesModel(),rate=num(wst.rate),withRate=rate>0;
+  const mlabel={pay:"HOURS PAYABLE",phys:"PHYSICAL HOURS",good:"GOOD BRICKS"}[wst.metric];
+  $("wtitle").textContent=`WAGES SHEET   ${dmy(wst.from)} TO ${dmy(wst.to)}   (${mlabel}${wst.shift==="ALL"?"":", "+wst.shift})`;
+  $("wmeta").textContent=`${list.length} employees · ${dates.length} days`+(dates.length>=62?" (first 62 days shown)":"");
+  let h="<thead><tr><th>SL. NO</th><th>EMP CODE</th><th>EMPLOYEE NAME</th><th>TYPE</th><th>GENDER</th>"+dates.map(d=>`<th class="d">${dshort(d)}</th>`).join("")+"<th>TOTAL</th><th>DAYS WORKED</th>"+(withRate?"<th>AMOUNT</th>":"")+"</tr></thead><tbody>";
+  const colT=dates.map(()=>0);let gT=0,gD=0,gA=0;
+  list.forEach((e,i)=>{
+    h+=`<tr><td class="sl">${i+1}</td><td class="nm">${esc(e.code)}</td><td class="nm">${esc(e.name)}</td><td class="nm">${e.type}</td><td class="nm">${e.gender}</td>`;
+    dates.forEach((d,j)=>{const v=e.vals[d]||0;colT[j]+=v;h+=`<td class="n${v?"":" z"}">${v?fmt(v):""}</td>`});
+    gT+=e.total;gD+=e.days;const amt=e.total*rate;gA+=amt;
+    h+=`<td class="n t">${fmt(e.total)}</td><td class="n t">${e.days}</td>`+(withRate?`<td class="n t">${fmt(amt)}</td>`:"")+"</tr>";
+  });
+  h+=`<tr class="tot"><td class="lab" colspan="5">TOTALS</td>`+colT.map(v=>`<td>${v?fmt(v):""}</td>`).join("")+`<td>${fmt(gT)}</td><td>${gD}</td>`+(withRate?`<td>${fmt(gA)}</td>`:"")+"</tr></tbody>";
+  $("wgrid").innerHTML=h;wlast={dates,list,rate,withRate,mlabel};
+}
+function wSubscribe(){
+  if(wunsub){wunsub();wunsub=null}
+  wdocs={};
+  if(!wst.from||!wst.to||wst.from>wst.to){renderWages();return}
+  if(db){
+    try{wunsub=db.collection("press_sheets").where("date",">=",wst.from).where("date","<=",wst.to).onSnapshot(sn=>{const o={};sn.docs.forEach(d=>o[d.id]=d.data());wdocs=o;renderWages();$("wstat").textContent="Live · "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})},e=>{$("wstat").textContent="Paused"})}catch(e){}
+  }else{
+    eachDate(wst.from,wst.to).forEach(d=>["DAY","NIGHT"].forEach(s=>{const v=lsGet(d+"__"+s);if(v)wdocs[d+"__"+s]=v}));
+    $("wstat").textContent="Local only";
+  }
+  renderWages();
+}
+function setView(v){
+  view=v;$("viewD").hidden=v!=="D";$("dnote").hidden=v!=="D";$("viewW").hidden=v!=="W";$("dailyCtl").hidden=v!=="D";
+  $("tabD").setAttribute("aria-pressed",v==="D");$("tabW").setAttribute("aria-pressed",v==="W");
+  if(v==="W"){if(dirty)save(true);wSubscribe()}else if(wunsub){wunsub();wunsub=null}
+}
+$("tabD").onclick=()=>setView("D");$("tabW").onclick=()=>setView("W");
+(()=>{const n=new Date();wst.to=iso(n);wst.from=iso(new Date(n.getFullYear(),n.getMonth(),1));$("wf").value=wst.from;$("wt").value=wst.to;$("wr").value=wst.rate})();
+$("wf").onchange=e=>{wst.from=e.target.value;wSubscribe()};$("wt").onchange=e=>{wst.to=e.target.value;wSubscribe()};
+$("wm").onchange=e=>{wst.metric=e.target.value;renderWages()};$("ws").onchange=e=>{wst.shift=e.target.value;renderWages()};
+$("wonly").onchange=e=>{wst.only=e.target.checked;renderWages()};
+$("wr").oninput=e=>{wst.rate=e.target.value;try{localStorage.setItem("psd:wprefs",JSON.stringify({rate:wst.rate}))}catch(x){};renderWages()};
+$("wxls").onclick=async()=>{
+  if(!wlast)return;const{dates,list,withRate,mlabel}=wlast,rate=num(wst.rate);
+  const nd=dates.length,c0=5,cT=c0+nd,cD=cT+1,cR=cD+1,cA=cR+1;
+  const banner=`WAGES DATE SHEET   FROM ${dmy(wst.from)}   TO ${dmy(wst.to)}   (${mlabel}${wst.shift==="ALL"?"":", "+wst.shift+" shift"})`;
+  const head=["SL. NO","EMP CODE","EMPLOYEE NAME","TYPE OF LABOUR","GENDER",...dates.map(dmy),"TOTAL","DAYS WORKED"];
+  if(withRate)head.push("RATE PER HOUR","AMOUNT");
+  const ws=XLSX.utils.aoa_to_sheet([[banner],head]);
+  const first=3,last=first+list.length-1;
+  list.forEach((e,i)=>{
+    const rn=first+i,row=[i+1,e.code,e.name,e.type,e.gender,...dates.map(d=>e.vals[d]?Math.round(e.vals[d]*100)/100:"")];
+    XLSX.utils.sheet_add_aoa(ws,[row],{origin:{r:rn-1,c:0}});
+    const rg=`${letter(c0)}${rn}:${letter(cT-1)}${rn}`;
+    ws[XLSX.utils.encode_cell({r:rn-1,c:cT})]={t:"n",v:e.total,f:`SUM(${rg})`};
+    ws[XLSX.utils.encode_cell({r:rn-1,c:cD})]={t:"n",v:e.days,f:`COUNTIF(${rg},">0")`};
+    if(withRate){ws[XLSX.utils.encode_cell({r:rn-1,c:cR})]={t:"n",v:rate};ws[XLSX.utils.encode_cell({r:rn-1,c:cA})]={t:"n",v:e.total*rate,f:`${letter(cT)}${rn}*${letter(cR)}${rn}`}}
+  });
+  const tr=last+1,tot=["TOTALS","","","",""];
+  XLSX.utils.sheet_add_aoa(ws,[tot],{origin:{r:tr-1,c:0}});
+  for(let c=c0;c<=cD;c++){const col=letter(c),v=c<cT?dates.reduce((a,_,j)=>a,0):0;ws[XLSX.utils.encode_cell({r:tr-1,c})]={t:"n",v:list.reduce((a,e)=>a+(c<cT?(e.vals[dates[c-c0]]||0):c===cT?e.total:e.days),0),f:`SUM(${col}${first}:${col}${last})`}}
+  if(withRate)ws[XLSX.utils.encode_cell({r:tr-1,c:cA})]={t:"n",v:list.reduce((a,e)=>a+e.total*rate,0),f:`SUM(${letter(cA)}${first}:${letter(cA)}${last})`};
+  ws["!ref"]=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:tr-1,c:withRate?cA:cD}});
+  ws["!cols"]=[{wch:7},{wch:10},{wch:30},{wch:14},{wch:8},...dates.map(()=>({wch:10})),{wch:10},{wch:12},{wch:12},{wch:12}];
+  ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:Math.max(cD,9)}},{s:{r:tr-1,c:0},e:{r:tr-1,c:4}}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"WAGES SHEET");
+  await offer(`WAGES_SHEET_${dmy(wst.from)}_TO_${dmy(wst.to)}.xlsx`,new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})]));
+};
+/* ---------- theme ---------- */
+const ACC={blue:["#1f4e78","#5a9bd5","#dce8f4","#1f3248"],green:["#1d6b45","#5fd08e","#dcf2e5","#16382a"],orange:["#a8480b","#f0a05a","#fde6d2","#46280f"],purple:["#5b3f9a","#a98ae0","#e8e0f7","#2f2548"],slate:["#3a4656","#aab6c6","#e1e6ed","#2a3340"]};
+const prefs={theme:"system",accent:"blue"};
+try{Object.assign(prefs,JSON.parse(localStorage.getItem("psd:prefs"))||{})}catch(e){}
+const mq=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
+function applyTheme(){
+  const root=document.documentElement;
+  if(prefs.theme==="system")root.removeAttribute("data-theme");else root.setAttribute("data-theme",prefs.theme);
+  const dark=prefs.theme==="dark"||(prefs.theme==="system"&&mq&&mq.matches);
+  const a=ACC[prefs.accent]||ACC.blue;
+  root.style.setProperty("--brand",dark?a[1]:a[0]);root.style.setProperty("--brand-soft",dark?a[3]:a[2]);
+  root.style.setProperty("--brand-ink",dark?"#0b1420":"#ffffff");
+  $("theme").value=prefs.theme;
+  document.querySelectorAll("#sw button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.a===prefs.accent));
+}
+$("sw").innerHTML=Object.keys(ACC).map(k=>`<button data-a="${k}" title="${k}" aria-label="${k} accent" aria-pressed="false" style="background:${ACC[k][0]}"></button>`).join("");
+$("sw").onclick=e=>{const b=e.target.closest("button");if(!b)return;prefs.accent=b.dataset.a;applyTheme();savePrefs()};
+$("theme").onchange=e=>{prefs.theme=e.target.value;applyTheme();savePrefs()};
+function savePrefs(){try{localStorage.setItem("psd:prefs",JSON.stringify(prefs))}catch(e){}}
+if(mq&&mq.addEventListener)mq.addEventListener("change",applyTheme);
+applyTheme();
+/* ---------- clock + auto ---------- */
+function tick(){
+  const n=new Date();
+  $("clock").childNodes[0].textContent=n.toLocaleDateString("en-GB",{weekday:"short",day:"2-digit",month:"short",year:"numeric"})+"  "+n.toLocaleTimeString("en-GB");
+  if(state.auto&&state.date){const s=nowShift();if(s.date!==state.date||s.shift!==state.shift)go(s.date,s.shift)}
+}
+(async()=>{
+  const n=nowShift();state.date=n.date;state.shift=n.shift;subscribe();
+  try{const c=window.claude;if(c&&c.use){db=await c.use("db");dl=await c.use("downloads")}}catch(e){}
+  subscribe();
+})();
+tick();setInterval(tick,1000);
+</script>
+
+</body></html>
